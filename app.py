@@ -11,6 +11,8 @@ from sklearn.tree import DecisionTreeRegressor, export_text, export_graphviz
 import io, base64
 import pydotplus
 import pickle
+import matplotlib.pyplot as plt
+from sklearn.tree import plot_tree
 
 # Datos
 df = pd.read_csv('https://raw.githubusercontent.com/plotly/datasets/master/gapminder2007.csv')
@@ -291,13 +293,20 @@ def entrenar_arbol(n_clicks, variables, max_depth):
     model = DecisionTreeRegressor(max_depth=max_depth, random_state=0)
     model.fit(X, y)
 
+    # Reglas en texto
     reglas = export_text(model, feature_names=list(X.columns))
-    dot_data = io.StringIO()
-    export_graphviz(model, out_file=dot_data, feature_names=X.columns,
-                    filled=True, rounded=True, special_characters=True)
-    graph = pydotplus.graph_from_dot_data(dot_data.getvalue())
-    img = graph.create_png()
-    b64_img = base64.b64encode(img).decode()
+
+    # Crear imagen con matplotlib
+    fig, ax = plt.subplots(figsize=(12, 6))
+    plot_tree(model, feature_names=list(X.columns), filled=True, rounded=True, fontsize=8)
+    plt.tight_layout()
+
+    # Convertir imagen a base64
+    buf = io.BytesIO()
+    plt.savefig(buf, format="png")
+    plt.close(fig)
+    buf.seek(0)
+    b64_img = base64.b64encode(buf.read()).decode()
 
     return html.Pre(reglas), f"data:image/png;base64,{b64_img}"
 
