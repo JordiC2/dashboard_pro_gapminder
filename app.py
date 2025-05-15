@@ -10,6 +10,7 @@ from sklearn.metrics import r2_score, mean_squared_error
 from sklearn.tree import DecisionTreeRegressor, export_text, export_graphviz
 import io, base64
 import pydotplus
+import pickle
 
 # Datos
 df = pd.read_csv('https://raw.githubusercontent.com/plotly/datasets/master/gapminder2007.csv')
